@@ -1,0 +1,39 @@
+# Uniswap v4 Extsload Optimization Configuration
+# Copy this file and modify for your chain deployment
+
+[extsload_optimization]
+# Enable/disable the optimization
+enabled = true
+
+# PoolManager contract addresses to optimize
+# Add the addresses of PoolManager contracts deployed on your chain
+pool_manager_addresses = [
+    "0x1f98400000000000000000000000000000000004",  # Uniswap v4 PoolManager
+    # Add additional addresses as needed
+]
+
+[precompile_addresses]
+# Precompile addresses for optimized functions
+# These should be available addresses in your precompile range
+single_slot = "0x0000000000000000000000000000000000000100"
+consecutive_slots = "0x0000000000000000000000000000000000000101" 
+sparse_slots = "0x0000000000000000000000000000000000000102"
+
+[gas_costs]
+# Optimized gas costs (much lower than standard SLOAD costs)
+single_slot_gas = 200         # vs ~2100 for standard SLOAD
+consecutive_base_gas = 500    # base cost for batch operations
+consecutive_per_slot = 150    # per additional slot
+sparse_base_gas = 500         # base cost for sparse reads
+sparse_per_slot = 180         # per slot in sparse read
+
+[monitoring]
+# Optional: Enable metrics collection for optimization effectiveness
+collect_metrics = true
+log_intercepted_calls = false  # Set to true for debugging
+
+# Expected performance improvements
+[expected_savings]
+single_extsload = "90%"           # 2100 → 200 gas
+batch_extsload = "87%"            # 6300 → 800 gas  
+stateLibrary_calls = "60-80%"     # Overall StateLibrary improvement
