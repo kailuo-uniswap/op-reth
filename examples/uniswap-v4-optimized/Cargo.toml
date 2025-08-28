@@ -1,0 +1,33 @@
+[package]
+name = "uniswap-v4-optimized"
+version = "0.0.0"
+publish = false
+edition = "2021"
+license = "MIT"
+
+[workspace]
+
+[[bin]]
+name = "benchmark"
+path = "src/bin/benchmark.rs"
+
+[dependencies]
+# alloy
+alloy-primitives = "0.8"
+
+# revm - simplified for standalone testing
+revm = { version = "14", features = ["std", "secp256k1"] }
+
+# async
+tokio = { version = "1.0", features = ["rt-multi-thread", "macros"] }
+
+# misc
+eyre = "0.6"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+clap = { version = "4.0", features = ["derive"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+[dev-dependencies]
+hex-literal = "0.4"

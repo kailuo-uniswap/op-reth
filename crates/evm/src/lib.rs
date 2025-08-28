@@ -46,6 +46,9 @@ pub mod system_calls;
 /// test helpers for mocking executor
 pub mod test_utils;
 
+/// Extsload optimization for Uniswap v4 and similar contracts
+pub mod extsload_optimizer;
+
 /// An abstraction over EVM.
 ///
 /// At this point, assumed to be implemented on wrappers around [`revm::Evm`].
