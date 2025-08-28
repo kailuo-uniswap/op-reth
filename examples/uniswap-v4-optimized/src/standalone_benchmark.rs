@@ -79,13 +79,8 @@ impl BenchmarkResult {
     }
 
     pub fn print(&self) {
-        println!("📊 {} Results:", self.test_name);
-        println!("   Standard Gas:    {:>8} gas", self.standard_gas);
-        println!("   Optimized Gas:   {:>8} gas", self.optimized_gas);
-        println!("   Gas Savings:     {:>8} gas ({:.1}%)", self.gas_savings, self.savings_percent);
-        println!("   SLOAD Operations: {:>7}", self.sload_count);
-        println!("   Iterations:      {:>8}", self.iterations);
-        println!();
+        println!("{}: {} → {} gas ({:.1}% savings)", 
+                 self.test_name, self.standard_gas, self.optimized_gas, self.savings_percent);
     }
 }
 
@@ -105,11 +100,6 @@ impl StandaloneBenchmark {
 
     /// Run comprehensive benchmark suite
     pub fn run_all_benchmarks(&self) -> Vec<BenchmarkResult> {
-        println!("🚀 Running Uniswap v4 Extsload Optimization Benchmarks");
-        println!("{}", "=".repeat(60));
-        println!("This demonstrates gas improvements from EVM-level optimizations");
-        println!();
-        
         vec![
             self.benchmark_single_slot(),
             self.benchmark_consecutive_slots(3),
@@ -249,9 +239,6 @@ impl StandaloneBenchmark {
 
 /// Print comprehensive benchmark summary
 pub fn print_benchmark_summary(results: &[BenchmarkResult]) {
-    println!("📈 BENCHMARK SUMMARY");
-    println!("{}", "=".repeat(80));
-    
     let total_standard_gas: u64 = results.iter().map(|r| r.standard_gas).sum();
     let total_optimized_gas: u64 = results.iter().map(|r| r.optimized_gas).sum();
     let total_savings = total_standard_gas.saturating_sub(total_optimized_gas);
@@ -261,57 +248,7 @@ pub fn print_benchmark_summary(results: &[BenchmarkResult]) {
         0.0
     };
     
-    println!("Overall Performance:");
-    println!("  Total Standard Gas:    {:>12} gas", total_standard_gas);
-    println!("  Total Optimized Gas:   {:>12} gas", total_optimized_gas);
-    println!("  Total Gas Savings:     {:>12} gas ({:.1}%)", total_savings, overall_savings_percent);
-    println!();
-    
-    println!("Top Performers (by savings %):");
-    let mut sorted_results = results.to_vec();
-    sorted_results.sort_by(|a, b| b.savings_percent.partial_cmp(&a.savings_percent).unwrap());
-    
-    for (i, result) in sorted_results.iter().take(5).enumerate() {
-        println!("  {}. {}: {:.1}% savings ({} → {} gas)", 
-                 i + 1, result.test_name, result.savings_percent,
-                 result.standard_gas, result.optimized_gas);
-    }
-    println!();
-    
-    println!("Real-World Impact Examples:");
-    let dashboard_result = results.iter().find(|r| r.test_name.contains("Dashboard"));
-    let mev_result = results.iter().find(|r| r.test_name.contains("MEV"));
-    let getslot0_result = results.iter().find(|r| r.test_name.contains("getSlot0"));
-    
-    if let Some(result) = getslot0_result {
-        println!("  • Single getSlot0() call: {} → {} gas ({:.1}% reduction)", 
-                 result.standard_gas, result.optimized_gas, result.savings_percent);
-    }
-    
-    if let Some(result) = dashboard_result {
-        println!("  • DeFi Dashboard (20 pools): {} → {} gas ({:.1}% reduction)", 
-                 result.standard_gas, result.optimized_gas, result.savings_percent);
-    }
-    
-    if let Some(result) = mev_result {
-        println!("  • MEV Bot Analysis (50 pools): {} → {} gas ({:.1}% reduction)", 
-                 result.standard_gas, result.optimized_gas, result.savings_percent);
-    }
-    
-    println!();
-    println!("🎯 Chain Operator Benefits:");
-    println!("  • Reduced transaction costs for Uniswap v4 users");
-    println!("  • Increased block space efficiency");
-    println!("  • Competitive advantage for Uniswap v4 adoption");
-    println!("  • No contract modifications required");
-    println!("  • Transparent to existing applications");
-    println!();
-    
-    println!("💡 Next Steps:");
-    println!("  1. Update config.toml with your PoolManager addresses");
-    println!("  2. Deploy op-reth node with extsload optimizations"); 
-    println!("  3. Monitor real-world gas savings");
-    println!("  4. Share results with your ecosystem");
+    println!("Total: {} → {} gas ({:.1}% savings)", total_standard_gas, total_optimized_gas, overall_savings_percent);
 }
 
 #[cfg(test)]

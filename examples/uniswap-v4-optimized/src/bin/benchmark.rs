@@ -120,35 +120,18 @@ fn main() -> Result<()> {
 }
 
 fn print_banner() {
-    println!("🚀 UNISWAP V4 EXTSLOAD OPTIMIZATION BENCHMARK");
-    println!("{}", "=".repeat(60));
-    println!("This tool measures gas improvements from EVM-level extsload");
-    println!("optimizations for Uniswap v4 PoolManager operations.");
-    println!();
+    println!("Extsload Optimization Benchmark");
 }
 
 fn print_config_info(iterations: usize) {
-    println!("⚙️  Configuration:");
-    println!("   Iterations per test: {}", iterations);
-    println!("   Standard SLOAD cost: 2,100 gas");
-    println!("   Optimized single slot: 200 gas");
-    println!("   Optimized batch base: 500 gas + per-slot cost");
-    println!();
+    println!("Iterations: {}", iterations);
 }
 
 fn run_all_tests(benchmark: &StandaloneBenchmark, quiet: bool) -> Vec<BenchmarkResult> {
-    if !quiet {
-        println!("🧪 Running comprehensive benchmark suite...");
-        println!();
-    }
     benchmark.run_all_benchmarks()
 }
 
 fn run_specific_test(benchmark: &StandaloneBenchmark, test_name: &str, quiet: bool) -> Vec<BenchmarkResult> {
-    if !quiet {
-        println!("🧪 Running specific test: {}", test_name);
-        println!();
-    }
 
     vec![match test_name {
         "single-slot" => benchmark.benchmark_single_slot(),
@@ -169,8 +152,6 @@ fn run_specific_test(benchmark: &StandaloneBenchmark, test_name: &str, quiet: bo
 }
 
 fn output_human_summary(results: &[BenchmarkResult], duration: std::time::Duration) {
-    println!("✅ Benchmark completed in {:.2}s", duration.as_secs_f64());
-    
     let total_standard: u64 = results.iter().map(|r| r.standard_gas).sum();
     let total_optimized: u64 = results.iter().map(|r| r.optimized_gas).sum();
     let total_savings = total_standard.saturating_sub(total_optimized);
@@ -180,28 +161,9 @@ fn output_human_summary(results: &[BenchmarkResult], duration: std::time::Durati
         0.0
     };
 
-    println!();
-    println!("🎯 KEY TAKEAWAYS:");
-    println!("   • Single extsload calls: ~90% gas reduction (2,100 → 200 gas)");
-    println!("   • Batch operations: 70-85% gas reduction with economies of scale");
-    println!("   • Real DeFi scenarios: 75%+ savings for typical use cases");
-    println!("   • No contract modifications needed - transparent optimization");
-    println!();
-    
-    println!("📊 FINAL RESULTS:");
-    println!("   Total Gas (Standard):  {:>12} gas", total_standard);
-    println!("   Total Gas (Optimized): {:>12} gas", total_optimized);
-    println!("   Total Savings:         {:>12} gas ({:.1}%)", total_savings, overall_percent);
-    
-    if let Some(best) = results.iter().max_by(|a, b| a.savings_percent.partial_cmp(&b.savings_percent).unwrap()) {
-        println!("   Best Performer:        {} ({:.1}% savings)", best.test_name, best.savings_percent);
-    }
-    
-    println!();
-    println!("💡 Ready for Production:");
-    println!("   These results prove the optimization works as designed.");
-    println!("   Deploy your op-reth node with extsload precompiles to start");
-    println!("   saving gas for your Uniswap v4 users immediately.");
+    println!("Standard Gas:  {} gas", total_standard);
+    println!("Optimized Gas: {} gas", total_optimized);
+    println!("Gas Savings:   {} gas ({:.1}%)", total_savings, overall_percent);
 }
 
 fn output_json(
